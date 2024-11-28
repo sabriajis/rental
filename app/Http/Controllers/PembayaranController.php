@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Sewa;
@@ -9,12 +8,6 @@ use Illuminate\Support\Str;
 
 class PembayaranController extends Controller
 {
-    // Menampilkan halaman konfirmasi pembayaran
-    public function index(Sewa $sewa)
-    {
-        return view('pembayaran.index', compact('sewa'));
-    }
-
     // Proses pembayaran melalui Midtrans
     public function process(Request $request)
     {
@@ -34,10 +27,13 @@ class PembayaranController extends Controller
         // Generate a unique order_id using a combination of sewa ID, timestamp, and a random string
         $order_id = 'order_' . $sewa->id . '_' . now()->timestamp . '_' . Str::random(8); // More readable and unique
 
+        // Pastikan total pembayaran adalah angka (misalnya, 200.000 menjadi 200000)
+        $totalPembayaran = intval(str_replace('.', '', $sewa->total));
+
         $params = [
             'transaction_details' => [
-                'order_id' => $order_id, // Use the unique order_id
-                'gross_amount' => $sewa->total,
+                'order_id' => $sewa->id, // Use the unique order_id
+                'gross_amount' => $totalPembayaran, // Gunakan nilai total dalam bentuk angka (misalnya 200000)
             ],
             'customer_details' => [
                 'name' => $request->nama,
@@ -56,18 +52,14 @@ class PembayaranController extends Controller
         return view('pembayaran.process', compact('snapToken', 'sewa'));
     }
 
+     // Menangani callback dari Midtrans
+     public function notification(Sewa $sewa)
+     {
+         // Perbarui status sewa
+         $sewa->status = 'Berhasil Melakukan Pembayaran';
+         $sewa->save();
 
-
-    // Menangani callback dari Midtrans
-    public function notification(Sewa $sewa)
-    {
-        // Perbarui status sewa
-        $sewa->status = 'Berhasil Melakukan Pembayaran';
-        $sewa->save();
-
-        // Kirimkan data sewa yang sudah diperbarui ke view
-        return view('pembayaran.bukti', compact('sewa'));
-    }
-
-
+         // Kirimkan data sewa yang sudah diperbarui ke view
+         return view('pembayaran.bukti', compact('sewa'));
+     }
 }

@@ -19,7 +19,7 @@
                                 <p><strong>Nama Mobil:</strong> {{ $sewa->mobil->nama }}</p>
                                 <p><strong>Tipe Mobil:</strong> {{ $sewa->mobil->tipe }}</p>
                                 <p><strong>Durasi Sewa:</strong> {{ $sewa->durasi }} hari</p>
-                                <p><strong>Total Harga:</strong> Rp {{ number_format($sewa->total, 0, ',', '.') }}</p>
+                                <p><strong>Total Pembayaran:</strong> {{ $sewa->total }}</p>
                                 <p><strong>Nama Penyewa:</strong> {{ $sewa->nama }}</p>
                                 <p><strong>Email:</strong> {{ $sewa->email }}</p>
                                 <p><strong>No. Telepon:</strong> {{ $sewa->phone }}</p>
@@ -30,16 +30,12 @@
                         </div>
                     </div>
 
-
-                        <!-- Form untuk proses ke pembayaran -->
-                        <form action="{{ route('pembayaran.process') }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="sewa_id" value="{{ $sewa->id }}">
-                            <button type="submit" class="btn btn-primary btn-block mt-3">Bayar Sekarang</button>
-                        </form>
-{{--
-                        <p class="text-center text-danger mt-3">Pembayaran tidak dapat dilanjutkan karena data tidak lengkap.</p> --}}
-
+                    <!-- Form untuk proses pembayaran -->
+                    <form action="{{ route('pembayaran.process', $sewa->id)  }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="sewa_id" value="{{ $sewa->id }}">
+                        <button type="submit" class="btn btn-primary btn-block mt-3">Bayar Sekarang</button>
+                    </form>
 
                     <!-- Tombol kembali -->
                     <a href="{{ url()->previous() }}" class="btn btn-secondary btn-block mt-3">Kembali</a>

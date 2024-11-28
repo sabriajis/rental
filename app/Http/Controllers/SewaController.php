@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Mobil;
@@ -13,6 +14,7 @@ class SewaController extends Controller
      */
     public function create($mobil)
     {
+        // Cek apakah mobil ada atau tidak
         $mobil = Mobil::findOrFail($mobil);
 
         // Periksa apakah mobil tersedia
@@ -28,13 +30,12 @@ class SewaController extends Controller
      */
     public function store(Request $request)
     {
+        // Validasi data input
         $validated = $request->validate([
-            'mobil_id' => 'required|exists:mobils,id',
-            'durasi' => 'required|integer|min:1',
-            'nama' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => 'nullable|string|max:15',
-            'alamat' => 'nullable|string|max:255',
+            'mobil_id' => 'required|exists:mobils,id',  // Pastikan mobil_id ada di tabel mobils
+            'durasi' => 'required|integer|min:1',       // Durasi sewa minimal 1
+            'phone' => 'nullable|string|max:15',        // Nomor telepon opsional
+            'alamat' => 'nullable|string|max:255',      // Alamat opsional
         ]);
 
         // Ambil mobil yang dipilih
@@ -50,12 +51,12 @@ class SewaController extends Controller
         $sewa->mobil_id = $mobil->id;
         $sewa->user_id = Auth::id(); // Ambil ID user yang sedang login
         $sewa->durasi = $validated['durasi'];
-        $sewa->nama = $validated['nama'];
-        $sewa->email = $validated['email'];
+        $sewa->nama = Auth::user()->name;  // Nama diambil dari user yang sedang login
+        $sewa->email = Auth::user()->email; // Email diambil dari user yang sedang login
         $sewa->phone = $validated['phone'];
         $sewa->alamat = $validated['alamat'];
-        $sewa->status = 'Menunggu Pembayaran'; // Set status awal
-        $sewa->total = $validated['durasi'] * $mobil->harga; // Hitung total harga sewa
+        $sewa->status = 'Menunggu Pembayaran'; // Status awal sewa
+        $sewa->total = $validated['durasi'] * $mobil->harga; // Total harga sewa
 
         // Simpan data sewa
         $sewa->save();
@@ -63,22 +64,20 @@ class SewaController extends Controller
         // Update status mobil menjadi "Tidak Tersedia"
         $mobil->update(['tersedia' => '0']);
 
-        // Redirect langsung ke halaman pembayaran
-        return redirect()->route('pembayaran.index', ['sewa' => $sewa->id])
+        // Redirect ke halaman detail sewa untuk pembayaran
+        return redirect()->route('sewa.show', ['id' => $sewa->id])
             ->with('success', 'Sewa berhasil dibuat. Silakan lanjutkan pembayaran!');
     }
 
     /**
      * Menampilkan detail sewa (opsional)
      */
-    public function show(Sewa $sewa)
+    public function show($id)
     {
-        // Periksa apakah user yang sedang login adalah pemilik sewa
-        if ($sewa->user_id != Auth::id()) {
-            return abort(403, 'Anda tidak memiliki akses ke halaman ini.');
-        }
+        // Mengambil data sewa lengkap dengan relasi mobil
+        $sewa = Sewa::with('mobil')->findOrFail($id);
 
-        return view('sewa.show', compact('sewa'));
+        return view('pembayaran.index', compact('sewa'));
     }
 
     /**
@@ -86,7 +85,9 @@ class SewaController extends Controller
      */
     public function index()
     {
+        // Mengambil semua sewa yang dimiliki oleh user yang sedang login
         $sewas = Sewa::where('user_id', Auth::id())->get();
+
         return view('sewa.index', compact('sewas'));
     }
 }
