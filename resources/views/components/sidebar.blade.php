@@ -1,8 +1,8 @@
 <div class="main-sidebar sidebar-style-2">
     <aside id="sidebar-wrapper">
         <div class="sidebar-brand">
-            <a href="{{ route('home') }}">E - Kedai
-                <img src="{{ asset('img/kedai.png') }}" alt="logo" width="70">
+            <a href="{{ route('home') }}">Rental FI
+                <img src="{{ asset('img/asli.png') }}" alt="logo" width="70">
             </a>
         </div>
         <div class="sidebar-brand sidebar-brand-sm">

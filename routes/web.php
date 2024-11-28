@@ -5,19 +5,33 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\MobilController;
 use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\SewaController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RentalMobilController;
+use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
-    return view('auth.auth-login');
+    return view('dasboard.index');
 });
+
+Route::get('/login', [HomeController::class,'login'])->name('login');
+
+
+//Route untuk register
+Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+Route::post('register', [RegisterController::class, 'register']);
+
+
 
 // Grup route dengan middleware 'auth' (untuk pengguna yang sudah login)
 Route::middleware(['auth'])->group(function () {
 
-    // Halaman Dashboard
-    Route::get('home', function () {
-        return view('pages.dashboard', ['type_menu' => 'home']);
-    })->name('home');
+    Route::get('home', [DashboardController::class, 'index'])->name('home');
+
+    // // Halaman Dashboard
+    // Route::get('home', function () {
+    //     return view('pages.dashboard', ['type_menu' => 'home']);
+    // })->name('home');
 
     // Grup route untuk admin
     Route::middleware(['role:admin'])->group(function () {
@@ -46,6 +60,9 @@ Route::middleware(['auth'])->group(function () {
         // Menampilkan formulir sewa untuk mobil tertentu
         Route::get('sewa/create/{mobil}', [SewaController::class, 'create'])->name('sewa.create');
 
+        Route::get('sewa/{id}', [SewaController::class, 'show'])->name('sewa.show');
+
+
         // Menyimpan data sewa dan melanjutkan ke pembayaran
         Route::post('sewa', [SewaController::class, 'store'])->name('sewa.store');
 
@@ -53,7 +70,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('pembayaran/{sewa}', [PembayaranController::class, 'index'])->name('pembayaran.index');
 
         // Mengarahkan ke Midtrans untuk proses pembayaran
-        Route::post('pembayaran/process', [PembayaranController::class, 'process'])->name('pembayaran.process');
+        Route::post('pembayaran/process/{id}', [PembayaranController::class, 'process'])->name('pembayaran.process');
 
 
         Route::get('/pembayaran/notification/{sewa}', [PembayaranController::class, 'notification'])->name('notification');

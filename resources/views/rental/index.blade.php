@@ -27,7 +27,7 @@
                         @include('layouts.alert')
                     </div>
                 </div>
-                <h2 class="section-title">Mobil Tersedia</h2>
+                <h2 class="section-title">Manajemen Mobil </h2>
                 <p class="section-lead">
                     Anda dapat mengelola semua mobil, seperti mengedit, menghapus, dan lainnya.
                 </p>

@@ -11,8 +11,8 @@ class RentalMobilController extends Controller
    // Menampilkan daftar mobil yang tersedia
    public function index()
    {
-       // Ambil mobil yang statusnya tersedia
-       $mobils = Mobil::where('tersedia', true)->get();
+      // Ambil semua data mobil
+        $mobils = Mobil::all();
        return view('rental.index', compact('mobils'));  // Mengirimkan data mobil ke view
    }
 

@@ -22,11 +22,11 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="nama">Nama Lengkap</label>
-                                        <input type="text" name="nama" class="form-control" id="nama" value="{{ Auth::user()->name }}" required>
+                                        <input type="text" name="nama" class="form-control" id="nama" value="{{ Auth::user()->name }}" readonly>
                                     </div>
                                     <div class="form-group">
                                         <label for="email">Email</label>
-                                        <input type="email" name="email" class="form-control" id="email" value="{{ Auth::user()->email }}" required>
+                                        <input type="email" name="email" class="form-control" id="email" value="{{ Auth::user()->email }}" readonly>
                                     </div>
                                     <div class="form-group">
                                         <label for="phone">Nomor Telepon</label>

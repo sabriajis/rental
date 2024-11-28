@@ -29,13 +29,13 @@
                             <div class="mb-3">
                                 <p><strong>Status Pembayaran:</strong> <span class="badge bg-success">{{ $sewa->status }}</span></p>
                                 <p><strong>Order ID:</strong> {{ $sewa->id }}</p>
-                                <p><strong>Total Pembayaran:</strong> Rp {{ number_format($sewa->total, 2, ',', '.') }}</p>
+                                <p><strong>Total Pembayaran:</strong> Rp {{ $sewa->total }}</p>
                             </div>
 
                             <!-- Informasi Mobil yang Dipesan -->
                             <div class="mb-3">
                                 <p><strong>Mobil yang Dipesan:</strong> {{ $sewa->mobil->nama }}</p>
-                                <p><strong>Harga Sewa:</strong> Rp {{ number_format($sewa->mobil->harga, 2, ',', '.') }} per hari</p>
+                                <p><strong>Harga Sewa:</strong> Rp {{ number_format($sewa->mobil->harga) }} /hari</p>
                                 <div class="text-center">
                                     <img src="{{ asset('storage/' . $sewa->mobil->image) }}" alt="Mobil" class="img-fluid" style="max-width: 100%; height: auto;">
                                 </div>
